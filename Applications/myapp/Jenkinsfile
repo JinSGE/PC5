@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+    
+    environment {
+        HARBOR_HOST = '10.2.2.40:5000'
+        IMAGE_NAME = 'myapp'
+        GITEA_HOST = '10.2.2.40:3001'
+    }
+    
+    stages {
+        stage('Build & Push Image') {
+            steps {
+                echo "🚀 호스트(CI-OPS)에서 빌드 및 Harbor 업로드 시작"
+                
+                sh """
+                    ssh -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no root@10.2.2.40 '
+                        set -e
+                        
+                        echo "1. 소스 코드 가져오기 (Git Clone)"
+                        rm -rf /tmp/myapp_build
+                        git clone http://${GITEA_HOST}/admin/myapp-source.git /tmp/myapp_build
+                        cd /tmp/myapp_build
+                        
+                        echo "2. Docker 이미지 빌드"
+                        docker build -t myapp:${BUILD_NUMBER} .
+                        
+                        echo "3. Harbor 로그인"
+                        docker login ${HARBOR_HOST} -u admin -p Admin123
+                        
+                        echo "4. 태그 및 Push"
+                        docker tag myapp:${BUILD_NUMBER} ${HARBOR_HOST}/library/myapp:${BUILD_NUMBER}
+                        docker tag myapp:${BUILD_NUMBER} ${HARBOR_HOST}/library/myapp:latest
+                        
+                        docker push ${HARBOR_HOST}/library/myapp:${BUILD_NUMBER}
+                        docker push ${HARBOR_HOST}/library/myapp:latest
+                        
+                        echo "✅ Harbor 업로드 완료!"
+                        echo "이미지: ${HARBOR_HOST}/library/myapp:${BUILD_NUMBER}"
+                        
+                        echo "5. 정리 (Clean up)"
+                        rm -rf /tmp/myapp_build
+                        docker rmi myapp:${BUILD_NUMBER} || true
+                        docker rmi ${HARBOR_HOST}/library/myapp:${BUILD_NUMBER} || true
+                        docker rmi ${HARBOR_HOST}/library/myapp:latest || true
+                    '
+                """
+            }
+        }
+        
+        stage('Update Helm Chart') {
+            steps {
+                echo "☸️ Helm Chart 버전 업데이트 (GitOps)"
+                
+                sh """
+                    ssh -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no root@10.2.2.40 '
+                        set -e
+                        
+                        echo "1. Ansible 저장소 Clone (Helm Chart 포함)"
+                        rm -rf /tmp/gitops_update
+                        mkdir -p /tmp/gitops_update
+                        cd /tmp/gitops_update
+                        
+                        # Gitea HTTP 인증 사용 (admin/Ansible.git)
+                        git clone http://admin:Admin123@${GITEA_HOST}/admin/myapp-helm.git .
+                        
+                        echo "2. values.yaml 수정 (이미지 태그 업데이트)"
+                        git config user.email "jenkins@antigravity.local"
+                        git config user.name "Jenkins CI"
+                        
+                        # sed로 태그 변경 (큰따옴표 주의)
+                        sed -i "s/tag: .*/tag: \\"${BUILD_NUMBER}\\"/" values.yaml
+                        
+                        echo "3. 변경 사항 확인"
+                        grep "tag:" values.yaml
+                        
+                        echo "4. Commit & Push"
+                        git add values.yaml
+                        
+                        # 변경사항이 있을 때만 커밋
+                        if ! git diff-index --quiet HEAD; then
+                            git commit -m "Bump myapp image tag to ${BUILD_NUMBER} [skip ci]"
+                            git push http://admin:Admin123@${GITEA_HOST}/admin/myapp-helm.git main
+                            echo "✅ Helm Chart 업데이트 완료"
+                        else
+                            echo "⚠️ 변경 사항 없음 (이미 최신 버전)"
+                        fi
+                        
+                        echo "5. 정리"
+                        cd /
+                        rm -rf /tmp/gitops_update
+                    '
+                """
+            }
+        }
+    }
+}
