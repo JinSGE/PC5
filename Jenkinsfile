@@ -26,7 +26,7 @@ pipeline {
                     sh "ansible-galaxy collection install -r requirements.yml"
                     
                     echo "🔍 변경사항을 시뮬레이션 합니다 (Dry Run)..."
-                    sh "ansible-playbook -i inventory.ini ${params.PLAYBOOK} --check"
+                    sh "ansible-playbook -i inventory.ini ${params.PLAYBOOK} -l \"${params.LIMIT}\" --check"
                 }
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             steps {
                 script {
                     echo "🚀 실제 배포를 시작합니다..."
-                    sh "ansible-playbook -i inventory.ini ${params.PLAYBOOK}"
+                    sh "ansible-playbook -i inventory.ini ${params.PLAYBOOK} -l \"${params.LIMIT}\""
                 }
             }
         }
