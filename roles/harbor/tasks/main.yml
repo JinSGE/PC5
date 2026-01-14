@@ -45,6 +45,20 @@
     creates: /opt/harbor/common/config/core/env
   register: harbor_install
 
+- name: 7-1. Harbor Systemd 서비스 파일 배포
+  template:
+    src: harbor.service.j2
+    dest: /etc/systemd/system/harbor.service
+    mode: '0644'
+  notify: Reload Systemd
+
+- name: 7-2. Harbor 서비스 활성화 및 시작
+  systemd:
+    name: harbor
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
 - name: 8. Harbor 서비스 시작 확인
   shell: docker compose ps
   args:
