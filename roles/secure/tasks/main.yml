@@ -24,24 +24,28 @@
 - name: Apply sysctl settings now
   command: sysctl --system
 
+# 공용(외부) 인터페이스를 Public Zone에 할당 (자동 감지된 nic1_interface 사용)
 - name: Ensure public interface is assigned to public zone (permanent)
   command: "firewall-cmd --permanent --zone=public --add-interface={{ nic1_interface | default('ens160') }}"
   register: r_pub_if
   failed_when: false
   changed_when: "'success' in (r_pub_if.stdout | lower)"
 
+# 사설(내부) 인터페이스를 Trusted Zone에 할당 (자동 감지된 nic2_interface 사용)
 - name: Ensure private interface is assigned to trusted zone (permanent)
   command: "firewall-cmd --permanent --zone=trusted --add-interface={{ nic2_interface | default('ens192') }}"
   register: r_tru_if
   failed_when: false
   changed_when: "'success' in (r_tru_if.stdout | lower)"
 
+# 중요: 내부망(10.2.2.0/24)을 'Trusted' 존에 추가하여 모든 포트 접근 허용
 - name: Ensure trusted zone allows source 10.2.2.0/24 (permanent)
   command: firewall-cmd --permanent --zone=trusted --add-source=10.2.2.0/24
   register: r_tru_src
   failed_when: false
   changed_when: "'success' in (r_tru_src.stdout | lower)"
 
+# 중요: DB망(10.2.3.0/24)도 'Trusted' 존에 추가하여 DB 접근 허용
 - name: Ensure trusted zone allows source 10.2.3.0/24 (permanent - DB Network)
   command: firewall-cmd --permanent --zone=trusted --add-source=10.2.3.0/24
   register: r_tru_db

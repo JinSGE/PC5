@@ -134,6 +134,22 @@ ansible-playbook -i inventory.ini playbooks/02_k8s_install.yml
 - **Shell Prompt**: Tier별 색상 구분 (PC1 Red, PC2 Green, ...)
 - **Desktop**: Antigravity 바로가기, Chrome, VS Code 자동 설치
 - **Hostnames**: `PCx-Role` 형식으로 자동 표준화
+- **Dynamic NIC Detection**: 서버별로 다른 랜카드 이름(eth0, ens160 등)을 **자동 감지**하여 유연하게 대처
+
+---
+
+## 🔐 7. 보안 및 계정 관리 (Security & IAM)
+
+### 👤 Ansible User Bootstrap
+모든 서버는 `root` 대신 **`ansible`** 전용 계정으로 관리됩니다.
+- **계정명**: `ansible`
+- **권한**: Passwordless Sudo (패스워드 없이 root 권한 사용)
+- **접속 방식**: SSH Key 기반 인증 (보안 강화)
+
+초기 서버 세팅 시, Root 계정으로 아래 플레이북을 1회 실행하여 이 환경을 구축해야 합니다:
+```bash
+ansible-playbook -i inventory.ini playbooks/00_bootstrap_ansible_user.yml -u root -k
+```
 
 ---
 
