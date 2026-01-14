@@ -14,6 +14,6 @@
   tasks:
     - name: Add Jenkins SSH Key to authorized_keys
       authorized_key:
-        user: root
+        user: ansible
         state: present
         key: "{{ hostvars['CI-OPS']['jenkins_pub_key'].stdout }}"
