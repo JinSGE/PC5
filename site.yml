@@ -2,6 +2,11 @@
 # ═══════════════════════════════════════════════════════════════════════════
 # Antigravity Infrastructure - Master Playbook
 # ═══════════════════════════════════════════════════════════════════════════
+# Step 0-1: Ansible User Bootstrap (최초 1회 실행)
+# 설명: 모든 서버에 'ansible' 계정을 생성하고 SSH 키를 배포합니다.
+# 주의: 이 단계는 Root 계정으로 실행해야 하므로, 아래와 같이 별도로 실행하거나 주석 해제 후 -u root 옵션 필요
+# - import_playbook: playbooks/00_bootstrap_ansible_user.yml
+
 # Step 0: 네트워크 프로비저닝 (SSH 키 배포 및 IP/DNS 설정)
 # - SSH Key 배포 (localhost)
 # - 정적 IP 할당 및 네트워크 인터페이스 설정 (nmcli)
