@@ -103,6 +103,7 @@ db_firewall_etcd_ports:
 # -----------------------------
 # pgBackRest / NFS
 # -----------------------------
+pgbackrest_stanza: "db"
 pgbackrest_repo_path: "/mnt/pgbackrest"
 
 nfs_server: "10.2.2.30"           # storage1 IP
