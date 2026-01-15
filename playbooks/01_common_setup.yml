@@ -28,8 +28,8 @@
           {%- if inventory_hostname in ['SECURE', 'WAF'] -%}PC1
           {%- elif 'ControlPlane' in inventory_hostname -%}PC2
           {%- elif inventory_hostname in ['K8S-WorkerNode1', 'K8S-WorkerNode2', 'K8S-WorkerNode3'] -%}PC3
-          {%- elif 'DB' in inventory_hostname or 'Storage' in inventory_hostname -%}PC4
-          {%- elif inventory_hostname in ['CIcD', 'Monitoring'] -%}PC5
+          {%- elif 'DB' in inventory_hostname or 'Storage' in inventory_hostname or 'etcd' in inventory_hostname -%}PC4
+          {%- elif inventory_hostname in ['CI-OPS', 'DNS'] or 'Monitoring' in inventory_hostname -%}PC5
           {%- elif inventory_hostname in ['K8S-WorkerNode4', 'K8S-WorkerNode5', 'K8S-WorkerNode6'] -%}PC6
           {%- else -%}PCX{%- endif -%}
 
