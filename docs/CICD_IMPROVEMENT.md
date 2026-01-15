@@ -30,7 +30,7 @@
 
 ## 🛠️ Infrastructure Components
 
-### CI/CD Server (CI-OPS: 10.2.2.40)
+### CI/CD Server (CICD-OPS: 10.2.2.40)
 - **Jenkins**: CI/CD 오케스트레이션
 - **Gitea**: 내부 Git 저장소 (GitHub 미러링)
 - **Harbor**: Docker Registry (이미지 저장소)

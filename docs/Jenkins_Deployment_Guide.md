@@ -33,11 +33,11 @@ cd All-Ansible
 ```
 
 ### 단계 2: 인벤토리 확인
-배포 대상 서버(`CI-OPS`, `PC5`)가 인벤토리에 올바르게 정의되어 있는지 확인합니다.
+배포 대상 서버(`CICD-OPS`, `PC5`)가 인벤토리에 올바르게 정의되어 있는지 확인합니다.
 
 ```bash
 # 인벤토리 파일: inventory.ini
-cat inventory.ini | grep CI-OPS -A 5
+cat inventory.ini | grep CICD-OPS -A 5
 ```
 
 ### 단계 3: 배포 실행 (Ansible Playbook)

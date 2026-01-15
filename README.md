@@ -13,7 +13,7 @@
 |:---:|:---:|---|---|---|---|
 | **PC1** | **Security** | `SECURE` | `172.16.6.61` (외부)<br>`10.2.1.1` (내부) | Gateway / Firewall | 포트포워딩 |
 | | | `WAF` | `10.2.1.2` | Web Application Firewall | 웹 방화벽 (ModSecurity) |
-| | | `DNS` | `10.2.1.3` | DNS Server | 내부 DNS (Bind9) |
+| | | `DNS` | `10.2.2.60` | DNS Server | 내부 DNS (Bind9) |
 | **PC2** | **K8s Master** | `K8S-ControlPlane1` | `10.2.2.2` | K8s Primary Master | HA 리더 |
 | | | `K8S-ControlPlane2` | `10.2.2.3` | K8s Secondary Master | HA 멤버 |
 | | | `K8S-ControlPlane3` | `10.2.2.4` | K8s Secondary Master | HA 멤버 |
@@ -29,7 +29,7 @@
 | | | `etcd_2` | `10.2.3.21` | Etcd Cluster | DB Leader Election |
 | | | `etcd_3` | `10.2.3.22` | Etcd Cluster | DB Leader Election |
 | | | `Storage` | `10.2.2.30` | NFS Server | 공유 스토리지 |
-| **PC5** | **Ops (CI/CD)** | `CI-OPS` | `10.2.2.40` | Jenkins + Gitea + Harbor | CI/CD & Registry |
+| **PC5** | **Ops (CI/CD)** | `CICD-OPS` | `10.2.2.40` | Jenkins + Gitea + Harbor | CI/CD & Registry |
 | | **Monitoring** | `Monitoring` | `10.2.2.50` | Prometheus + Grafana | 모니터링 Master |
 | | | `Monitoring_Backup` | `10.2.2.51` | Prometheus + Grafana | 모니터링 Standby |
 | **PC6** | **K8s Workers** | `K8S-WorkerNode4` | `10.2.2.8` | Worker Node | 워커 그룹 B |

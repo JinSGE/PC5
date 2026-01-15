@@ -11,7 +11,7 @@ pipeline {
         // [1단계] Docker 이미지 빌드 및 Harbor 레지스트리 업로드
         stage('Build & Push Image') {
             steps {
-                echo "🚀 호스트(CI-OPS)에서 빌드 및 Harbor 업로드 시작"
+                echo "🚀 호스트(CICD-OPS)에서 빌드 및 Harbor 업로드 시작"
                 
                 sh """
                     ssh -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no root@10.2.2.40 '

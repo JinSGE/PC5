@@ -1,6 +1,6 @@
 ---
 - name: Fetch Jenkins SSH Key
-  hosts: CI-OPS
+  hosts: CICD-OPS
   tasks:
     - name: Read SSH Key
       shell: "docker exec jenkins cat /var/jenkins_home/.ssh/id_rsa.pub"
@@ -16,4 +16,4 @@
       authorized_key:
         user: ansible
         state: present
-        key: "{{ hostvars['CI-OPS']['jenkins_pub_key'].stdout }}"
+        key: "{{ hostvars['CICD-OPS']['jenkins_pub_key'].stdout }}"

@@ -3,7 +3,7 @@
 # Playbook 05: Deploy CI/CD - Jenkins, Gitea 배포
 # ═══════════════════════════════════════════════════════════════════════════
 - name: CI/CD 서버 구성 (Gitea + Jenkins)
-  hosts: CI-OPS
+  hosts: CICD-OPS
   become: yes
   roles:
     - gitea
