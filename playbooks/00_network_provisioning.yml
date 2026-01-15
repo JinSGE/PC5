@@ -34,6 +34,7 @@
       shell: "nmcli -t -f DEVICE,TYPE device | grep 'ethernet' | cut -d: -f1"
       register: detected_nics
       changed_when: false
+      check_mode: no
       ignore_errors: yes
 
     - name: 감지된 인터페이스로 변수 갱신 (NIC 1 - 주 인터페이스)
@@ -44,7 +45,7 @@
     - name: 감지된 인터페이스로 변수 갱신 (NIC 2 - 보조 인터페이스)
       set_fact:
         nic2_interface: "{{ detected_nics.stdout_lines[1] }}"
-      when: nic_count|int >= 2 and detected_nics.stdout_lines | length >= 2
+      when: nic_count|default(0)|int >= 2 and detected_nics.stdout_lines | length >= 2
 
     - name: 감지된 인터페이스 확인
       debug:
@@ -63,7 +64,7 @@
         dns4: "{{ nic1_dns | default(omit) }}"
         method4: manual
         state: present
-      when: nic_count|int >= 1 and nic1_interface is defined
+      when: nic_count|default(0)|int >= 1 and nic1_interface is defined
 
     # NIC 2 설정 (존재하는 경우)
     - name: NIC 2 설정 ({{ nic2_interface | default('none') }})
@@ -76,7 +77,7 @@
         dns4: "{{ nic2_dns | default(omit) }}"
         method4: manual
         state: present
-      when: nic_count|int >= 2 and nic2_interface is defined
+      when: nic_count|default(0)|int >= 2 and nic2_interface is defined
 
     - name: 연결 다시 로드 (NetworkManager)
       shell: nmcli connection reload
@@ -87,6 +88,7 @@
       ignore_errors: yes
       async: 10
       poll: 0
+      when: not ansible_check_mode
 - name: 외부 통신 설정 (Bridge Network - PC1)
   hosts: Security_Tier
   become: yes
