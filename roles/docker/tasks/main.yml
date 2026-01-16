@@ -5,6 +5,7 @@
   get_url:
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docker-ce.repo
+  become: yes
 
 - name: 2. Docker 엔진 및 유틸리티 설치
   dnf:
