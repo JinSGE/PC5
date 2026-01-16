@@ -45,6 +45,20 @@
         immediate: yes
         state: enabled
 
+# 1.5단계: Node Exporter 바이너리 준비 (Localhost)
+- name: Node Exporter 바이너리 준비
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    node_exporter_version: "1.7.0"
+  tasks:
+    - name: Node Exporter 바이너리 다운로드
+      get_url:
+        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+
+
 # 2단계: 모든 서버에 Node Exporter 설치 (바이너리 방식)
 # 설명: 모든 서버의 CPU, 메모리, 디스크 정보를 수집. 
 #Prometheus로 보내는 에이전트(Node Exporter) 설치.
@@ -64,13 +78,6 @@
       ignore_errors: yes
       when: not ansible_check_mode
       
-    - name: Node Exporter 바이너리 다운로드 (Local Controller)
-      get_url:
-        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
-        dest: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
-      delegate_to: localhost
-      run_once: true
-
     - name: Node Exporter 바이너리 복사 (Controller -> Remote)
       copy:
         src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
