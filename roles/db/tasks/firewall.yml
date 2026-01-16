@@ -4,6 +4,19 @@
     name: firewalld
     state: present
 
+- name: Check firewalld state
+  ansible.builtin.command: firewall-cmd --state
+  register: firewalld_state
+  failed_when: false
+  changed_when: false
+
+- name: Recover firewalld if stuck (flush nftables and restart)
+  shell: |
+    nft flush ruleset
+    systemctl restart firewalld
+  when: firewalld_state.rc != 0
+  ignore_errors: true
+
 - name: Ensure firewalld running
   ansible.builtin.service:
     name: firewalld
@@ -17,13 +30,13 @@
 - name: Wait for firewalld to be fully ready
   ansible.builtin.pause:
     seconds: 3
-  when: firewalld_service.changed
+  when: firewalld_service.changed or firewalld_state.rc != 0
 
 - name: Detect default firewalld zone
   ansible.builtin.command: firewall-cmd --get-default-zone
   register: fw_default_zone
   changed_when: false
-  retries: 3
+  retries: 5
   delay: 2
   until: fw_default_zone.rc == 0
 
